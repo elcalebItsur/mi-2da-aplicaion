@@ -56,9 +56,11 @@ function ListasPersonas() {
     };
 
     const handleEliminar = (index) => {
-        const nuevaLista = listaPersonas.filter((_, i) => i !== index);
-        setListaPersonas(nuevaLista);
-        localStorage.setItem('personasStorage', JSON.stringify(nuevaLista));
+        if (window.confirm(`¿Está seguro de que desea eliminar a ${listaPersonas[index].nombre}?`)) {
+            const nuevaLista = listaPersonas.filter((_, i) => i !== index);
+            setListaPersonas(nuevaLista);
+            localStorage.setItem('personasStorage', JSON.stringify(nuevaLista));
+        }
     };
 
     const updatePersonaDisponibilidad = (index, nuevosChecked) => {
