@@ -7,6 +7,7 @@ function ListasPersonas() {
     const [agregarVisible, setAgregarVisible]=useState(false);
     const [nombre, setNombre] = useState('');
     const [disponibilidad, setDisponibilidad] = useState([false,false,false,false,false,false,false]);
+    const [editando, setEditando] = useState(null);
 
     const resetForm = () => {
         setNombre('');
@@ -18,12 +19,23 @@ function ListasPersonas() {
         const nuevoNombre = nombre.trim();
         if (!nuevoNombre) return;
 
-        const nuevaPersona = {
-            nombre: nuevoNombre,
-            disponibilidad,
-        };
+        let nuevaLista;
+        
+        if (editando !== null) {
+            // Modo edición
+            nuevaLista = listaPersonas.map((persona, i) =>
+                i === editando ? { nombre: nuevoNombre, disponibilidad } : persona
+            );
+            setEditando(null);
+        } else {
+            // Modo agregar
+            const nuevaPersona = {
+                nombre: nuevoNombre,
+                disponibilidad,
+            };
+            nuevaLista = [...listaPersonas, nuevaPersona];
+        }
 
-        const nuevaLista = [...listaPersonas, nuevaPersona];
         setListaPersonas(nuevaLista);
         localStorage.setItem('personasStorage', JSON.stringify(nuevaLista));
         resetForm();
@@ -33,6 +45,20 @@ function ListasPersonas() {
     const handleCancelar = () => {
         resetForm();
         setAgregarVisible(false);
+        setEditando(null);
+    };
+
+    const handleEditar = (index) => {
+        setNombre(listaPersonas[index].nombre);
+        setDisponibilidad(listaPersonas[index].disponibilidad);
+        setEditando(index);
+        setAgregarVisible(true);
+    };
+
+    const handleEliminar = (index) => {
+        const nuevaLista = listaPersonas.filter((_, i) => i !== index);
+        setListaPersonas(nuevaLista);
+        localStorage.setItem('personasStorage', JSON.stringify(nuevaLista));
     };
 
     const updatePersonaDisponibilidad = (index, nuevosChecked) => {
@@ -58,9 +84,10 @@ function ListasPersonas() {
     return (
         <>
             <h2>Lista Personas</h2>
-            <button type='button' onClick={()=>setAgregarVisible(true)}>Agregar</button>
+            <button type='button' onClick={()=>{resetForm(); setEditando(null); setAgregarVisible(true)}}>Agregar</button>
             {agregarVisible && (
                 <form onSubmit={handleGuardar}>
+                    <h3>{editando !== null ? 'Editar Persona' : 'Agregar Persona'}</h3>
                     <input type="text" placeholder='Nombre de la persona' value={nombre} onChange={(e)=>setNombre(e.target.value)} />
                     <Semana diasSeleccionados={disponibilidad} cambioDeDia={setDisponibilidad} />
                     <button type='submit'>Guardar</button>
@@ -73,6 +100,7 @@ function ListasPersonas() {
                         <th>Persona</th>
                         <th>Disponibilidad</th>
                         <th>Días Disponibles</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,6 +112,10 @@ function ListasPersonas() {
                             </td>
                             <td>
                                 {persona.disponibilidad.filter((dia) => dia === true).length}
+                            </td>
+                            <td>
+                                <button type='button' onClick={()=>handleEditar(index)}>Editar</button>
+                                <button type='button' onClick={()=>handleEliminar(index)}>Eliminar</button>
                             </td>
                         </tr>
                     ))}
