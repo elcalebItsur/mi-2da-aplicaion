@@ -110,7 +110,7 @@ function ListasPersonas() {
                         <tr key={index}>
                             <td>{persona.nombre}</td>
                             <td>
-                                <Semana diasSeleccionados={persona.disponibilidad} cambioDeDia={(nuevosChecked) => updatePersonaDisponibilidad(index, nuevosChecked)} />
+                                <Semana diasSeleccionados={persona.disponibilidad} cambioDeDia={(nuevosChecked) => updatePersonaDisponibilidad(index, nuevosChecked)} readOnly={true} />
                             </td>
                             <td>
                                 {persona.disponibilidad.filter((dia) => dia === true).length}

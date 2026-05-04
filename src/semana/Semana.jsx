@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Dia from './Dia'
 
-function Semana({laboral=false,diasSeleccionados = [false,false,false,false,false,false,false],extendida=false, cambioDeDia}) {
+function Semana({laboral=false,diasSeleccionados = [false,false,false,false,false,false,false],extendida=false, cambioDeDia, readOnly=false}) {
     let dias=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
         const [checked,setChecked]=useState(diasSeleccionados);
 
@@ -30,7 +30,7 @@ function Semana({laboral=false,diasSeleccionados = [false,false,false,false,fals
                 dias.map((dia,indice)=>
                     (indice<=4 || (!laboral && indice>=5)) && 
                     <Dia key={dia} marcado={checked[indice]} texto={extendida?dia:dia.substring(0,2)} 
-                    click={()=>{clickDia(indice); }}></Dia> //clickDia(0)
+                    click={readOnly ? () => {} : ()=>{clickDia(indice); }}></Dia> //clickDia(0)
                     //  click={clickDia}></Dia>
                     //  click={clickDia(indice)}></Dia>
                 )
